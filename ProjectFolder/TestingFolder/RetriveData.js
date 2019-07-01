@@ -138,12 +138,14 @@ onCollectionUpdate = (querySnapshot) => {
   render() {
     return (
       <View style={styles.container}>
-
-         <FlatList
+        <View style={{flex:1}}>
+        <FlatList
           data={this.state.todos}
+          style={{backgroundColor:'blue'}}
           renderItem={({item}) =>
-          
-          <TouchableOpacity onPress={ () => this.getDocument(item.key)}
+         
+          <TouchableOpacity 
+          style={{flex:1, backgroundColor:'red'}}
           onPress={()=>alert(item.name)}
           >
            <Text style={styles.item}>{item.key}:{item.name}:{item.country}</Text>
@@ -151,7 +153,11 @@ onCollectionUpdate = (querySnapshot) => {
            </TouchableOpacity>
           }
           />
+        </View>
+        <View style={{flex:1}}>
         <Text>App</Text>
+        </View>
+       
        {/*  <Button title="add" onPress={() => this.addData()} />
         <Button title="get" onPress={() => this.getDocument('SF')} />
         <Button title="get All" onPress={() => this.getAllData()} /> */}
@@ -169,6 +175,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //  backgroundColor: '#2c3e50',
   },
+  item:{
+      color:'white'
+  }
 });
 
 //make this component available to the app

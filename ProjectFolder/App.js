@@ -1,176 +1,211 @@
-//import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, FlatList,TouchableOpacity } from 'react-native';
-import firebase from 'react-native-firebase'
-// create a component
-class App extends Component {
-
-  state = {
-    myList:  [{'key':'1'},{'key':'2'}]
-  }
-
+import { View, Button, Text, TextInput, Image, StyleSheet, ScrollView } from 'react-native';
+import firebase from 'react-native-firebase';
+//import Mynotifcation from './Notification'
+//import Qrcode from './Qrcode'
+import ToDo from './components/Todo'
+import Singup from './Signup'
+export default class App extends Component {
   constructor(props) {
-    super(props)
-
-    db = firebase.firestore()
-    this.ref = firebase.firestore().collection('cities'),
+    super(props);
+    this.unsubscribe = null;
     this.state = {
-     
-      todos: [],
-  };
+      user: null,
+      message: '',
+      codeInput: '',
+      phoneNumber: '+4531223388',
+      confirmResult: null,
+      username: false,
+      resualt:false,
+      fullName:''
+    };
   }
-
-
-  addData = () => {
-
-    var citiesRef = db.collection("cities");
-
-    citiesRef.doc("SF").set({
-      name: "San Francisco", state: "CA", country: "USA",
-      capital: false, population: 860000,
-      regions: ["west_coast", "norcal"]
-    });
-    citiesRef.doc("LA").set({
-      name: "Los Angeles", state: "CA", country: "USA",
-      capital: false, population: 3900000,
-      regions: ["west_coast", "socal"]
-    });
-    citiesRef.doc("DC").set({
-      name: "Washington, D.C.", state: null, country: "USA",
-      capital: true, population: 680000,
-      regions: ["east_coast"]
-    });
-    citiesRef.doc("TOK").set({
-      name: "Tokyo", state: null, country: "Japan",
-      capital: true, population: 9000000,
-      regions: ["kanto", "honshu"]
-    });
-    citiesRef.doc("BJ").set({
-      name: "Beijing", state: null, country: "China",
-      capital: true, population: 21500000,
-      regions: ["jingjinji", "hebei"]
-    });
-    citiesRef.doc("IQ").set({
-      name: "بغداد", state: null, country: "العراق",
-      capital: true, population: 21500000,
-      regions: ["jingjinji", "hebei"]
-    });
-    citiesRef.doc("BGD").set({
-      name: "بغداد", state: null, country: "العراق",
-      capital: true, population: 21500000,
-      regions: ["jingjinji", "hebei"]
-    });
-  }
-
-  getDocument = (name) => {
-   
-   
-    var cityRef = db.collection('cities').doc(name);
-    var getDoc = cityRef.get()
-      .then(doc => {
-        if (!doc.exists) {
-          console.log('No such document!');
-        } else {
-          console.log('Document data:', doc.data());
-        }
-      })
-      .catch(err => {
-        console.log('Error getting document', err);
-      });
-  }
-
-   getAllData = ()=> {
- myData=[]
-    db.collection("cities").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-      myData.push({'key':doc.id})
-     
-      });
-    }).then(
-      this.setState({myList:myData})
-    )
-    console.log(myData)
-   
-    console.log(this.state.myList)
-  }
-
-  componentWillMount(){
-    myData=[]
-    db.collection("cities").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-      myData.push({'key':doc.data().name})
-     
-      });
-    }).then(
-      this.setState({myList:myData})
-    )
-    console.log(myData)
-   
-    console.log(this.state.myList)
-  }
-
   componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate) 
-}
-onCollectionUpdate = (querySnapshot) => {
-  const todos = [];
-  querySnapshot.forEach((doc) => {
-    const { name, country } = doc.data();
-    
-    todos.push({
-      key: doc.id,
-      name, // DocumentSnapshot
-      country,
-    
+    this.unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ user: user.toJSON() });
+      } else {
+        // User has been signed out, reset the state
+        this.setState({
+          user: null,
+          message: '',
+          codeInput: '',
+          phoneNumber: '+4531223388',
+          confirmResult: null,
+          resualt:false,
+          fullName:''
+        });
+      }
     });
-  });
-
-  this.setState({ 
-    todos,
-   // loading: false,
- });
-}
-  
-  render() {
+  }
+  componentWillUnmount() {
+    if (this.unsubscribe) this.unsubscribe();
+  }
+  signIn = () => {
+    const { phoneNumber } = this.state;
+    this.setState({ message: 'إرسال رمز التحقق ...' });
+    firebase.auth().signInWithPhoneNumber(phoneNumber)
+      .then(confirmResult => this.setState({ confirmResult, message: 'تم ارسال رمز التحقق', resualt:true }))
+     /*  .then((user)=>this.refs.child.justAlert(user["phoneNumber"],this.state.resualt,this.state.fullName)) */
+     .then((confirmResult)=>console.warn("true"))
+      .catch(error => this.setState({ message: `حدث خطأ : ${error.message}` }));
+  };
+  confirmCode = () => {
+    const { codeInput, confirmResult } = this.state;
+    if (confirmResult && codeInput.length) {
+      confirmResult.confirm(codeInput)
+        .then((user) => {
+          console.log(codeInput)
+        })
+        .then(console.warn(codeInput))
+        .catch(error => this.setState({ message: `حدث خطأ : ${error.message}` }));
+    }
+  };
+  signOut = () => {
+    firebase.auth().signOut();
+  }
+  showBarCode = () => {
+    this.setState({
+      username: true
+    })
+  }
+  renderPhoneNumberInput() {
+    const { phoneNumber } = this.state;
     return (
       <View style={styles.container}>
-
-         <FlatList
-          data={this.state.todos}
-          renderItem={({item}) =>
-          
-          <TouchableOpacity onPress={ () => this.getDocument(item.key)}
-          onPress={()=>alert(item.name)}
-          >
-           <Text style={styles.item}>{item.key}:{item.name}:{item.country}</Text>
-         
-           </TouchableOpacity>
-          }
+        <View style={styles.inputContainer}>
+          <Image style={styles.inputIcon} source={{ uri: 'https://png.icons8.com/male-user/ultraviolet/50/3498db' }} />
+          <TextInput style={styles.inputs}
+            placeholder="الإسم بالكامل"
+            keyboardType="email-address"
+            underlineColorAndroid='transparent'
+            onChangeText={(fullName) => this.setState({ fullName })} />
+        </View>
+        <View style={styles.inputContainer}>
+          <Image style={styles.inputIcon} source={{ uri: 'https://png.icons8.com/color/mobile' }} />
+          <TextInput style={styles.inputs}
+            placeholder="رقم التليفون"
+            keyboardType="email-address"
+            underlineColorAndroid='transparent'
+            onChangeText={value => this.setState({ phoneNumber: value })}
+            value={phoneNumber}
           />
-        
-        <Text>App</Text>
-        <Button title="add" onPress={() => this.addData()} />
-        <Button title="get" onPress={() => this.getDocument('SF')} />
-        <Button title="get All" onPress={() => this.getAllData()} />
+        </View>
+        {/*  <Text>إكتب رقم التليفون ...</Text>
+        <TextInput
+          autoFocus
+          style={{ height: 40, marginTop: 15, marginBottom: 15}}
+          onChangeText={value => this.setState({ phoneNumber: value })}
+          placeholder={'إكتب هنا رقم التليفون ...'}
+          value={phoneNumber}
+        /> */}
+        <Button title="تسجيل" disabled={this.state.phoneNumber.length < 10} onPress={this.signIn} />
+      </View>
+    );
+  }
+  renderMessage() {
+    const { message } = this.state;
+    if (!message.length) return null;
+    return (
+      <Text style={{ padding: 5, backgroundColor: '#000', color: '#fff' }}>{message}</Text>
+    );
+  }
+  renderVerificationCodeInput() {
+    const { codeInput } = this.state;
+    return (
+      <View style={{ marginTop: 25, padding: 25 }}>
+        <Text>أدخل رمز التحقق في الأسفل</Text>
+        <TextInput
+          autoFocus
+          style={{ height: 40, marginTop: 15, marginBottom: 15 }}
+          onChangeText={value => this.setState({ codeInput: value })}
+          placeholder={'Code ... '}
+          value={codeInput}
+        />
+        <Button title="فعل رمز التحقق" color="#841584" onPress={this.confirmCode} />
+      </View>
+    );
+  }
+  renderQrCode=(user)=>{
+    return(
+      <ScrollView style={{ flex: 10 }}>
+      <Text>your number is{user["phoneNumber"]}</Text>
+      <View style={{ flex: 3 }}>
+     <ToDo ref="child"  customerPhoneNumber={user["phoneNumber"]} confirm={this.state.resualt} fullName={this.state.fullName}/>
+     <Button title='toDo' onPress ={()=> this.refs.child.justAlert(user["phoneNumber"],this.state.resualt,this.state.fullName)}/>
+      </View>
+      <View style={{ flex: 7 }}>
+    {/*   <Qrcode customerPhoneNumber={user["phoneNumber"]}/> */}
+    </View>
+{/* <Button title="Out"  onPress={()=>this.signOut()}/> */}
+      <Singup signout={() => this.signOut()} qrcode={() => this.showBarCode()} customerPhoneNumber={user["phoneNumber"]} />
+    </ScrollView>
+    )
+  }
+  render() {
+    const { user, confirmResult } = this.state;
+    return (
+      <View style={{ flex: 1 }}>
+{!user && this.renderMessage()}
 
+        {!user && !confirmResult && this.renderPhoneNumberInput()}
+        
+        {!user && confirmResult && this.renderVerificationCodeInput()}
+        {user && !this.state.username && this.renderQrCode(user)}
+        {user && this.state.username && (
+          <Text>
+            show qrcode
+            </Text>
+        )
+        }
+      {/*   <Mynotifcation /> */}
       </View>
     );
   }
 }
-
-// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    //  backgroundColor: '#2c3e50',
+    backgroundColor: '#00b5ec',
   },
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 30,
+    borderBottomWidth: 1,
+    width: 250,
+    height: 45,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  inputs: {
+    height: 45,
+    marginLeft: 16,
+    borderBottomColor: '#FFFFFF',
+    flex: 1,
+  },
+  inputIcon: {
+    width: 30,
+    height: 30,
+    marginLeft: 15,
+    justifyContent: 'center'
+  },
+  buttonContainer: {
+    height: 45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 250,
+    borderRadius: 30,
+  },
+  signupButton: {
+    backgroundColor: "#FF4DFF",
+  },
+  signUpText: {
+    color: 'white',
+  }
 });
-
-//make this component available to the app
-export default App;
