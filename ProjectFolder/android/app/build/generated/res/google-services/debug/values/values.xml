@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">185599772353-i5ciaaf7kkl3lm10i95pj35ap4f57i9v.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://najafcitymall-47efc.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">185599772353</string>
+    <string name="google_api_key" translatable="false">AIzaSyDP_TId2LKsPurNQFzRUx_O9roHLoG7Rv0</string>
+    <string name="google_app_id" translatable="false">1:185599772353:android:c32c44649538d463</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDP_TId2LKsPurNQFzRUx_O9roHLoG7Rv0</string>
+    <string name="google_storage_bucket" translatable="false">najafcitymall-47efc.appspot.com</string>
+    <string name="project_id" translatable="false">najafcitymall-47efc</string>
+</resources>

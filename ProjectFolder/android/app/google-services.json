@@ -1,0 +1,109 @@
+{
+  "project_info": {
+    "project_number": "185599772353",
+    "firebase_url": "https://najafcitymall-47efc.firebaseio.com",
+    "project_id": "najafcitymall-47efc",
+    "storage_bucket": "najafcitymall-47efc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185599772353:android:834338fba8000d2b",
+        "android_client_info": {
+          "package_name": "com.najafmallcity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185599772353-ugolvd51vdcul6fce6b0t2s5b69lpthf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.najafmallcity",
+            "certificate_hash": "d88c828354b6a3509d46775576c852a665790ad1"
+          }
+        },
+        {
+          "client_id": "185599772353-ejl675q99ah0qms6h8cv1pd68otkltkb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.najafmallcity",
+            "certificate_hash": "5fada7b428fece7cedfcc22dfef442657209342c"
+          }
+        },
+        {
+          "client_id": "185599772353-i5ciaaf7kkl3lm10i95pj35ap4f57i9v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP_TId2LKsPurNQFzRUx_O9roHLoG7Rv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185599772353-i5ciaaf7kkl3lm10i95pj35ap4f57i9v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185599772353:android:c32c44649538d463",
+        "android_client_info": {
+          "package_name": "com.noma.najafcitymall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185599772353-o4c0ql1q4g68b2u8bfugj5kcts3fhstk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noma.najafcitymall",
+            "certificate_hash": "69a3572bcc36bf40c22c65c050db26176ca4903e"
+          }
+        },
+        {
+          "client_id": "185599772353-dgpm2sp9mpc9detkeddprhk6jeik79o3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noma.najafcitymall",
+            "certificate_hash": "d88c828354b6a3509d46775576c852a665790ad1"
+          }
+        },
+        {
+          "client_id": "185599772353-nhi8qsls9783olal473fho27air7a7l0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noma.najafcitymall",
+            "certificate_hash": "5fada7b428fece7cedfcc22dfef442657209342c"
+          }
+        },
+        {
+          "client_id": "185599772353-i5ciaaf7kkl3lm10i95pj35ap4f57i9v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP_TId2LKsPurNQFzRUx_O9roHLoG7Rv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185599772353-i5ciaaf7kkl3lm10i95pj35ap4f57i9v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
