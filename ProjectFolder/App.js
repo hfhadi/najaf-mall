@@ -1,101 +1,163 @@
-import React from 'react';
-import { StyleSheet, Platform, Image, Text, View, ScrollView } from 'react-native';
+//import liraries
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, Button, FlatList,TouchableOpacity } from 'react-native';
+import firebase from 'react-native-firebase'
+// create a component
+class App extends Component {
 
-import firebase from 'react-native-firebase';
-
-export default class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
+  state = {
+    myList:  [{'key':'1'},{'key':'2'}]
   }
 
-  async componentDidMount() {
-    // TODO: You: Do firebase things
-    // const { user } = await firebase.auth().signInAnonymously();
-    // console.warn('User -> ', user.toJSON());
+  constructor(props) {
+    super(props)
 
-    // await firebase.analytics().logEvent('foo', { bar: '123'});
+    db = firebase.firestore()
+    this.ref = firebase.firestore().collection('cities'),
+    this.state = {
+     
+      todos: [],
+  };
   }
 
+
+  addData = () => {
+
+    var citiesRef = db.collection("cities");
+
+    citiesRef.doc("SF").set({
+      name: "San Francisco", state: "CA", country: "USA",
+      capital: false, population: 860000,
+      regions: ["west_coast", "norcal"]
+    });
+    citiesRef.doc("LA").set({
+      name: "Los Angeles", state: "CA", country: "USA",
+      capital: false, population: 3900000,
+      regions: ["west_coast", "socal"]
+    });
+    citiesRef.doc("DC").set({
+      name: "Washington, D.C.", state: null, country: "USA",
+      capital: true, population: 680000,
+      regions: ["east_coast"]
+    });
+    citiesRef.doc("TOK").set({
+      name: "Tokyo", state: null, country: "Japan",
+      capital: true, population: 9000000,
+      regions: ["kanto", "honshu"]
+    });
+    citiesRef.doc("BJ").set({
+      name: "Beijing", state: null, country: "China",
+      capital: true, population: 21500000,
+      regions: ["jingjinji", "hebei"]
+    });
+  }
+
+  getDocument = (name) => {
+   
+   
+    var cityRef = db.collection('cities').doc(name);
+    var getDoc = cityRef.get()
+      .then(doc => {
+        if (!doc.exists) {
+          console.log('No such document!');
+        } else {
+          console.log('Document data:', doc.data());
+        }
+      })
+      .catch(err => {
+        console.log('Error getting document', err);
+      });
+  }
+
+   getAllData = ()=> {
+ myData=[]
+    db.collection("cities").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      myData.push({'key':doc.id})
+     
+      });
+    }).then(
+      this.setState({myList:myData})
+    )
+    console.log(myData)
+   
+    console.log(this.state.myList)
+  }
+
+  componentWillMount(){
+    myData=[]
+    db.collection("cities").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      myData.push({'key':doc.data().name})
+     
+      });
+    }).then(
+      this.setState({myList:myData})
+    )
+    console.log(myData)
+   
+    console.log(this.state.myList)
+  }
+
+  componentDidMount() {
+    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate) 
+}
+onCollectionUpdate = (querySnapshot) => {
+  const todos = [];
+  querySnapshot.forEach((doc) => {
+    const { name, country } = doc.data();
+    
+    todos.push({
+      key: doc.id,
+      name, // DocumentSnapshot
+      country,
+    
+    });
+  });
+
+  this.setState({ 
+    todos,
+   // loading: false,
+ });
+}
+  
   render() {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Image source={require('./assets/ReactNativeFirebase.png')} style={[styles.logo]}/>
-          <Text style={styles.welcome}>
-            Welcome to {'\n'} مرحبة سلام
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit App.js
-          </Text>
-          {Platform.OS === 'ios' ? (
-            <Text style={styles.instructions}>
-              Press Cmd+R to reload,{'\n'}
-              Cmd+D or shake for dev menu
-            </Text>
-          ) : (
-            <Text style={styles.instructions}>
-              Double tap R on your keyboard to reload,{'\n'}
-              Cmd+M or shake for dev menu
-            </Text>
-          )}
-          <View style={styles.modules}>
-            <Text style={styles.modulesHeader}>The following Firebase modules are pre-installed:</Text>
-            {firebase.admob.nativeModuleExists && <Text style={styles.module}>admob()</Text>}
-            {firebase.analytics.nativeModuleExists && <Text style={styles.module}>analytics()</Text>}
-            {firebase.auth.nativeModuleExists && <Text style={styles.module}>auth()</Text>}
-            {firebase.config.nativeModuleExists && <Text style={styles.module}>config()</Text>}
-            {firebase.crashlytics.nativeModuleExists && <Text style={styles.module}>crashlytics()</Text>}
-            {firebase.database.nativeModuleExists && <Text style={styles.module}>database()</Text>}
-            {firebase.firestore.nativeModuleExists && <Text style={styles.module}>firestore()</Text>}
-            {firebase.functions.nativeModuleExists && <Text style={styles.module}>functions()</Text>}
-            {firebase.iid.nativeModuleExists && <Text style={styles.module}>iid()</Text>}
-            {firebase.links.nativeModuleExists && <Text style={styles.module}>links()</Text>}
-            {firebase.messaging.nativeModuleExists && <Text style={styles.module}>messaging()</Text>}
-            {firebase.notifications.nativeModuleExists && <Text style={styles.module}>notifications()</Text>}
-            {firebase.perf.nativeModuleExists && <Text style={styles.module}>perf()</Text>}
-            {firebase.storage.nativeModuleExists && <Text style={styles.module}>storage()</Text>}
-          </View>
-        </View>
-      </ScrollView>
+      <View style={styles.container}>
+
+         <FlatList
+          data={this.state.todos}
+          renderItem={({item}) =>
+          
+          <TouchableOpacity onPress={ () => this.getDocument(item.key)}>
+           <Text style={styles.item}>{item.key}:{item.name}:{item.country}</Text>
+         
+           </TouchableOpacity>
+          }
+          />
+        
+        <Text>App</Text>
+       {/*  <Button title="add" onPress={() => this.addData()} />
+        <Button title="get" onPress={() => this.getDocument('SF')} />
+        <Button title="get All" onPress={() => this.getAllData()} /> */}
+      </View>
     );
   }
 }
 
+// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    //  backgroundColor: '#2c3e50',
   },
-  logo: {
-    height: 120,
-    marginBottom: 16,
-    marginTop: 64,
-    padding: 10,
-    width: 135,
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  modules: {
-    margin: 20,
-  },
-  modulesHeader: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  module: {
-    fontSize: 14,
-    marginTop: 4,
-    textAlign: 'center',
-  }
 });
+
+//make this component available to the app
+export default App;
