@@ -50,6 +50,16 @@ class App extends Component {
       capital: true, population: 21500000,
       regions: ["jingjinji", "hebei"]
     });
+    citiesRef.doc("IQ").set({
+      name: "بغداد", state: null, country: "العراق",
+      capital: true, population: 21500000,
+      regions: ["jingjinji", "hebei"]
+    });
+    citiesRef.doc("BGD").set({
+      name: "بغداد", state: null, country: "العراق",
+      capital: true, population: 21500000,
+      regions: ["jingjinji", "hebei"]
+    });
   }
 
   getDocument = (name) => {
@@ -133,7 +143,9 @@ onCollectionUpdate = (querySnapshot) => {
           data={this.state.todos}
           renderItem={({item}) =>
           
-          <TouchableOpacity onPress={ () => this.getDocument(item.key)}>
+          <TouchableOpacity onPress={ () => this.getDocument(item.key)}
+          onPress={()=>alert(item.name)}
+          >
            <Text style={styles.item}>{item.key}:{item.name}:{item.country}</Text>
          
            </TouchableOpacity>
@@ -141,9 +153,10 @@ onCollectionUpdate = (querySnapshot) => {
           />
         
         <Text>App</Text>
-       {/*  <Button title="add" onPress={() => this.addData()} />
+        <Button title="add" onPress={() => this.addData()} />
         <Button title="get" onPress={() => this.getDocument('SF')} />
-        <Button title="get All" onPress={() => this.getAllData()} /> */}
+        <Button title="get All" onPress={() => this.getAllData()} />
+
       </View>
     );
   }
